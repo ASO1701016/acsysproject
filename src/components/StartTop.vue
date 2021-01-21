@@ -47,7 +47,7 @@
                         </svg>
                     </div><!-- /.text-center -->
                     <h5 class="pb-2 pt-1 font-weight-bold">おすすめトレーニング</h5>
-                    <p>カロリーをたくさん消費できるトレーニングを紹介しています。トレーニングを達成すると自動的に登録されます。</p>
+                    <p>色々なトレーニングを紹介しています。トレーニングを達成すると自動的に登録されます。</p>
                 </div><!-- /.col-lg-4 -->
             </div><!-- /.row -->
 
@@ -91,7 +91,7 @@
                     <a href="https://twitter.com/acsys_calorie" class="twitter">acsys公式Twitter</a>
                 </div>
             </div>
-            <p class="float-right"><a href="/" class="btn btn-outline-success">トップに戻る</a></p>
+            <p class="float-right"><button class="btn btn-outline-success" @click="scrollTop()">トップに戻る</button></p>
             <p>2020 麻生ビジネス専門学校情報工学科2班<br>
                 お問い合わせ:1701017@st.asojuku.ac.jp</p>
         </footer><!-- /.footer -->
@@ -101,6 +101,14 @@
 <script>
     export default {
         name: "StartTop",
+        methods:{
+            scrollTop: function(){
+                window.scrollTo({
+                    top: 0,
+                    behavior: "instant"
+                })
+            },
+        }
     }
 </script>
 

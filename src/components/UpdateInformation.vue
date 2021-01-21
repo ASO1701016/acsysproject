@@ -1,6 +1,6 @@
 <template>
     <div id="#app">
-        <div class="jumbotron jumbotron-fluid bg-dark mt-5">
+        <div class="jumbotron jumbotron-fluid bg-dark ">
             <div class="container">
                 <h1 class="display-4 font-weight-lighter" style="font-family: Helvetica,'Yu Gothic UI',serif">更新情報</h1>
             </div>
@@ -125,12 +125,26 @@
                     <a href="https://twitter.com/acsys_calorie" class="twitter">acsys公式Twitter</a>
                 </div>
             </div>
-            <p class="float-right"><a href="/updateinformation" class="btn btn-outline-success">トップに戻る</a></p>
+            <p class="float-right"><button class="btn btn-outline-success" @click="scrollTop()">トップに戻る</button></p>
             <p>2020 麻生ビジネス専門学校情報工学科2班<br>
                 お問い合わせ:1701017@st.asojuku.ac.jp</p>
         </footer><!-- /.footer -->
     </div>
 </template>
+
+<script>
+    export default {
+        name: "UpdateInformation",
+        methods:{
+            scrollTop: function(){
+                window.scrollTo({
+                    top: 0,
+                    behavior: "instant"
+                })
+            },
+        }
+    }
+</script>
 
 <style scoped>
     .jumbotron {

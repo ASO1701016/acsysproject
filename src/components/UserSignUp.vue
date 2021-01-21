@@ -1,183 +1,186 @@
 <template>
     <div id="app" class="container">
-        <div class="text-success mt-5 pt-5  mb-3 text-center h1 font-weight-bold">
+        <!--タイトル-->
+        <div class="text-success pt-5  mb-3 text-center h1 font-weight-bold">
             acsys に新規登録
         </div>
         <form>
-            <div>
-                <h4 class="text-success border-bottom border-success mb-5 col-11 text-left mx-auto">ユーザー情報</h4>
-                <span class="form-group row mx-auto">
-                    <label for="Name" class="col-sm-3  col-form-label text-right col-auto" >名前</label>
-                    <input type="text" class="col-sm-7 col-auto form-control ml-xs-5 " id="Name" v-model="form.account_name">
+            <!--見出し-->
+            <h4 class="text-success border-bottom border-success mb-4 mt-5 col-md-10 mx-auto">ユーザー情報</h4>
+            <!--名前-->
+            <span class="form-group row mx-auto">
+                <label for="Name" class="col-md-3  col-form-label text-right col-auto">名前</label>
+                <input type="text" class="col-md-6 col-auto form-control" id="Name" v-model="form.account_name" v-bind:class="{'is-invalid':!nameResult}">
+                <span class="invalid-feedback text-center">{{SignupValidation.SignupNameResult}}</span>
+                <span class="form-text text-muted col-md-11 text-md-center">
+                    英字やカタカナ、ひらがな、漢字が使用できます
                 </span>
-                <p class="text-danger text-center h5 col-9">
-                    {{ SignupValidation.SignupNameResult }}
-                </p>
-            </div>
+            </span>
 
-            <div class="row form-group mx-auto mt-5" id="BirthDay">
-                <span id="BirthDayTitle" class="col-3 col-form-label text-right">
+            <!--生年月日-->
+            <div class="row form-group mx-auto mt-4" id="BirthDay">
+                <span id="BirthDayTitle" class="col-md-3 col-form-label text-right col-auto mb-1">
                     生年月日
                 </span>
-                <!--年 -->
-                <input type="text" id="Year" v-model="form.account_year" class="col-2 form-control">
-                <label for="Year" class="col-1 col-form-label">年</label>
-                <!--月 -->
-                <input type="text" id="Month" v-model="form.account_month" class="col-2 form-control">
-                <label for="Month" class="col-1 col-form-label">月</label>
-                <!--日 -->
-                <input type="text" id="Day" v-model="form.account_day" class="col-2 form-control">
-                <label for="Day" class="col-1 col-form-label">日</label>
-                <!-- 生年月日入力条件 -->
-                <b-container class="d-flex justify-content-center" style="">※年4桁・月1又は2桁・日1又は2桁（半角英数字のみ）</b-container>
+                <!--日付選択-->
+                <datepicker
+                        v-model=form.account_birthday
+                        :format="DatePickerFormat"
+                        :language="ja"
+                        :highlighted="highlighted"
+                        :disabled-dates="disabledDates"
+                        class="mt-1 col-md-7">
+                </datepicker>
             </div>
 
-            <p class="text-danger text-center h5 col-9">
-                {{ SignupValidation.SignupBirthdayResult }}
-            </p>
-            <p class="text-danger text-center h5 col-9">
-                {{ SignupValidation.SignupBirthdayYearResult }}
-            </p>
-            <p class="text-danger text-center h5 col-9">
-                {{ SignupValidation.SignupBirthdayMonthResult }}
-            </p>
-            <p class="text-danger text-center h5 col-9">
-                {{ SignupValidation.SignupBirthdayDayResult }}
-            </p>
-
             <!--性別 -->
-            <div class="Category_Gender row mt-5">
-                <label id="GenderTitle" class="col-3 col-form-label text-right">性別</label>
-                <div class="form-check mt-2 ml-3 col-2">
+            <div class="row mt-4">
+                <label id="GenderTitle" class="col-md-3  col-form-label text-right col-3">性別</label>
+                <div class="form-check mt-2 ml-3 col-md-2 col-auto">
                     <input class="form-check-input" type="radio" name="Gender" id="male" value="男性" v-model="form.account_gender" checked="checked">
                     <label class="form-check-label" for="male">男性</label>
                 </div>
-                <div class="form-check mt-2 col-2">
+                <div class="form-check mt-2 col-md-2 col-auto">
                     <input class="form-check-input" type="radio" name="Gender" id="female" value="女性" v-model="form.account_gender">
                     <label class="form-check-label" for="female">女性</label>
                 </div>
             </div>
-            <h4 class="text-success border-bottom border-success mt-4 mb-4 col-11 text-left mx-auto">アカウント情報</h4>
+
+            <!--見出し-->
+            <h4 class="text-success border-bottom border-success mt-5 col-md-10 mx-auto">アカウント情報</h4>
 
             <!--メールアドレス -->
             <div class="form-group row mx-auto mt-5">
-                <label for="MailAddress" class="col-lg-3 col-auto col-form-label text-right col-auto">メールアドレス</label><br>
-                <input type="email" class="col-sm-7 col-auto form-control ml-xs-5 " id="MailAddress" v-model="form.account_address">
+                <label for="MailAddress" class="col-md-3  col-form-label text-right col-auto">メールアドレス</label><br>
+                <input type="email" class="col-md-7 col-auto form-control " id="MailAddress" v-model="form.account_address" v-bind:class="{'is-invalid':!mailResult}">
+                <div class="invalid-feedback text-center">{{SignupValidation.SignupAddressResult}}</div>
             </div>
-            <p class="text-danger text-center h5 col-9">
-                {{ SignupValidation.SignupAddressResult }}
-            </p>
 
             <!--パスワード -->
-            <div class="form-group row mx-auto mt-5">
-                <label for="Password" class="col-sm-3  col-form-label text-right col-auto">パスワード</label><br>
-                <input type="password" class="col-sm-7 col-auto form-control ml-xs-5 " id="Password" v-model="form.account_pass"><br>
+            <div class="form-group row mx-auto mt-4">
+                <label for="Password" class="col-md-3  col-form-label text-right col-auto">パスワード</label><br>
+                <input type="password" class="col-md-7 col-auto form-control " id="Password" v-model="form.account_pass" v-bind:class="{'is-invalid':!passResult}"><br>
+                <div class="invalid-feedback text-center">{{SignupValidation.SignupPasswordResult}}</div>
+                <span class="form-text text-muted col-md-11 text-md-center">
+                    6～128字の半角英数字で入力してください。大文字と小文字は区別されます。
+                </span>
             </div>
-            <p class="text-danger text-center h5 col-9">
-                {{ SignupValidation.SignupPasswordResult }}
-            </p>
 
-            <h4 class="text-success border-bottom border-success mt-5 mb-5 col-11 text-left mx-auto">身体情報</h4>
+            <!--見出し-->
+            <h4 class="text-success border-bottom border-success mt-5 col-md-10 mx-auto">身体情報</h4>
 
             <!--身長 -->
             <div class="form-group row mx-auto mt-5">
-                <label for="Height"  class="col-sm-3  col-form-label text-right col-auto">身長</label><br>
-                <input type="text" class="col-sm-7 col-auto form-control ml-xs-5 " id="Height" v-model="form.account_height">
+                <label for="Height" class="col-md-3  col-form-label text-right col-auto">身長</label><br>
+                <input type="number" class="col-md-7 col-auto form-control " id="Height" v-model="form.account_height" v-bind:class="{'is-invalid':!heightResult}"><br>
+                <div class="invalid-feedback text-center">{{SignupValidation.SignupHeightResult}}</div>
             </div>
-            <p class="text-danger text-center h5 col-9">
-                {{ SignupValidation.SignupHeightResult }}
-            </p>
 
             <!--体重 -->
-            <div class="form-group row mx-auto mt-5">
-                <label for="BodyWeight" class="col-sm-3  col-form-label text-right col-auto">体重</label><br>
-                <input type="text" class="col-sm-7 col-auto form-control ml-xs-5 " id="BodyWeight" v-model="form.account_weight">
+            <div class="form-group row mx-auto mt-4">
+                <label for="BodyWeight" class="col-md-3  col-form-label text-right col-auto">体重</label><br>
+                <input type="number" class="col-md-7 col-auto form-control" id="BodyWeight" v-model="form.account_weight" v-bind:class="{'is-invalid':!weightResult}"><br>
+                <div class="invalid-feedback text-center">{{SignupValidation.SignupWeightResult}}</div>
             </div>
-            <p class="text-danger text-center h5 col-9">
-                {{ SignupValidation.SignupWeightResult }}
-            </p>
 
             <!--身体活動レベル -->
-            <div id="ActiveLevel" class="form-group mt-5 mx-auto">
-                <div class="row">
-                    <label class="col-lg-3 col-auto col-form-label text-right col-auto" for="ActiveLevel">身体活動レベル</label>
-                    <select name=”ActiveLevel” v-model="form.account_level"  class="form-control col-sm-7">
-                        <option value=1 selected="selected" >レベルⅠ</option>
-                        <option value=2>レベルⅡ</option>
-                        <option value=3>レベルⅢ</option>
-                    </select>
+            <div id="ActiveLevel" class="form-group mt-4 mx-auto row">
+                <label for="ActiveLevel" class="col-md-3  col-form-label text-right col-auto">身体活動レベル</label>
+                <select name=”ActiveLevel” v-model="form.account_level"  class="col-md-7 col-auto form-control" v-bind:class="{'is-invalid':!levelResult}">
+                    <option disabled value="">選択してください</option>
+                    <option value=1>レベルⅠ</option>
+                    <option value=2>レベルⅡ</option>
+                    <option value=3>レベルⅢ</option>
+                </select>
+                <div class="invalid-feedback text-center">{{SignupValidation.SignupLevelResult}}</div>
+            </div>
+            <div>
+                <table class="table col-md-10 mx-auto mt-3">
+                    <tr>
+                        <td class="text-nowrap">概要</td>
+                        <td>身体活動レベルとは、1日あたりの総エネルギー消費量を1日あたりの基礎代謝量で割った指標です。</td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">レベルⅠ</td>
+                        <td>生活の大部分が座位で、静的な活動が中心の場合</td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">レベルⅡ</td>
+                        <td>座位中心の仕事だが、職場内での移動や立位での作業・接客等、あるいは通勤・買物・家事、軽いスポーツ等のいずれかを含む場合</td>
+                    </tr>
+                    <tr>
+                        <td class="text-nowrap">レベルⅢ</td>
+                        <td>移動や立位の多い仕事への従事者。あるいは、スポーツなど余暇における活発な運動習慣をもっている場合</td>
+                    </tr>
+                </table>
+            </div>
+            <!--見出し-->
+            <h4 class="text-success border-bottom border-success mt-5 col-md-10 mx-auto">利用目的</h4>
+            <!--利用目的-->
+            <div class="row mt-4">
+                <label id="PurposeTitle" class="col-md-3  col-form-label text-right col-3">目的</label>
+                <div class="form-check mt-2 ml-3 col-md-2 col-auto">
+                    <input class="form-check-input" type="radio" name="Purpose" id="down" value="減量" v-model="form.account_purpose" checked="checked">
+                    <label class="form-check-label" for="down">減量</label>
                 </div>
-
-                <p class="text-danger text-center h5 col-9">
-                    {{ SignupValidation.SignupLevelResult }}
-                </p>
-
-                <div>
-                    <table class="table col-11  mx-auto mt-2">
-                        <tr>
-                            <td></td>
-                            <td>身体活動レベルとは、1日あたりの総エネルギー消費量を1日あたりの基礎代謝量で割った指標です。</td>
-                        </tr>
-                        <tr>
-                            <td class="text-nowrap">レベルⅠ</td>
-                            <td>生活の大部分が座位で、静的な活動が中心の場合</td>
-                        </tr>
-                        <tr>
-                            <td class="text-nowrap">レベルⅡ</td>
-                            <td>座位中心の仕事だが、職場内での移動や立位での作業・接客等、あるいは通勤・買物・家事、軽いスポーツ等のいずれかを含む場合</td>
-                        </tr>
-                        <tr>
-                            <td class="text-nowrap">レベルⅢ</td>
-                            <td>移動や立位の多い仕事への従事者。あるいは、スポーツなど余暇における活発な運動習慣をもっている場合</td>
-                        </tr>
-                    </table>
+                <div class="form-check mt-2 col-md-2 col-auto">
+                    <input class="form-check-input" type="radio" name="Purpose" id="up" value="増量" v-model="form.account_purpose">
+                    <label class="form-check-label" for="up">増量</label>
                 </div>
             </div>
         </form>
-        <div class="row mt-3 mb-5">
+        <div class="row mt-5 mb-5">
             <button id="post_btn" class="btn btn-success col-8 mx-auto"  @click="checkHandler(form,$event)">決定</button>
-        </div>
-        <div>
         </div>
     </div>
 </template>
 
 <script>
+    import Datepicker from "vuejs-datepicker";
+    import {ja} from 'vuejs-datepicker/dist/locale'
+
     const URL = 'https://fat3lak1i2.execute-api.us-east-1.amazonaws.com/acsys/users'
     export default {
         name: "test",
+        components:{ Datepicker },
         data: function () {
-            const post_data = {
-                account_name: '',
-                account_height: '',
-                account_weight: '',
-                account_birthday: '',
-                account_gender: '',
-                account_level: '',
-                account_address: '',
-                account_pass: '',
-            }
             return {
                 form: {
                     account_name: '',
                     account_height: '',
                     account_weight: '',
-                    account_year: '',
-                    account_month: '',
-                    account_day: '',
-                    account_birthday: '',
+                    account_birthday: new Date(1990,0),
                     account_gender: '男性',
                     account_level: '',
                     account_address: '',
                     account_pass: '',
+                    account_purpose:'減量',
                 },
-                post_data: post_data,
-                input_data: [],
-                output_data: [],
+                post_data: [],
                 errors:[],
-                ErrorMessage: true,
                 signupResult:false,
-
+                //エラー枠表示
+                nameResult:true,
+                mailResult:true,
+                passResult:true,
+                heightResult:true,
+                weightResult:true,
+                levelResult:true,
+                result:"",
+                //カレンダー入力に使用
+                //日付形式
+                DatePickerFormat: 'yyyy-MM-dd',
+                //土日を強調表示
+                highlighted: {
+                    days: [6, 0],
+                },
+                //日本語設定
+                ja:ja,
+                //日付制約
+                disabledDates: {
+                    from: new Date(),
+                },
+                //バリデーションエラー名
                 SignupValidation: {
                     SignupNameResult: "",
                     SignupBirthdayResult: "",
@@ -196,8 +199,18 @@
             checkHandler: function (array, event) {
                 this.checkForm(event);
             },
+            //Topへスクロール
+            scrollTop: function(){
+                window.scrollTo({
+                    top: 0,
+                    behavior: "instant"
+                })
+            },
             //----------------------------データ保存---------------------------------------
             Data_post:async function (array) {
+
+                //ローディングアニメーションを起動
+                this.$store.commit("setLoading", true)
 
                 // 生成する文字列の長さ
                 const l = 32;
@@ -213,13 +226,13 @@
                     account_name: array.account_name,
                     account_height: Number(array.account_height),
                     account_weight: Number(array.account_weight),
-                    account_birthday: Number(array.account_year + '' + ('00' + array.account_month).slice(-2) + '' + ('00' + array.account_day).slice(-2)),
+                    account_birthday: this.form.account_birthday.getFullYear() + ("0" + (this.form.account_birthday.getMonth() + 1)).slice(-2) +("0" + this.form.account_birthday.getDate()).slice(-2),
                     account_gender: array.account_gender,
                     account_level: array.account_level,
                     account_address: array.account_address,
                     account_pass: array.account_pass,
                     account_token:newToken,
-
+                    account_purpos:array.account_purpose,
                 }
                 const json_data = JSON.stringify(this.post_data)
                 await fetch(URL, {
@@ -237,12 +250,14 @@
                             console.log('新期登録ok')
                             this.signupResult = true
                         }else {
-                            console.log('新期登録ok')
+                            console.log('新期登録ng')
                         }
                     })
                     .catch(function (error) {
                         console.log(error)
                     })
+                //ローディングアニメーションを終了
+                this.$store.commit("setLoading", false)
                 if (this.signupResult){
                     return newToken
                 }else{
@@ -251,299 +266,163 @@
             },
             //------------------------------------------------------------------------------
 
-
             //-----------------------------バリデーション-------------------------------------
-
-
             checkForm:async function (event) {
-                let SignMail
-                let SignPass
-                let SignName
-                let SignBirthDay
-                let SignBirthDayYear
-                let SignBirthDayMonth
-                let SignBirthDayDay
-                let SignWeight
-                let SignHeight
-                let SignLevel
+                this.errors.splice(-this.errors.length)
                 let re1 = /^[A-Za-z0-9][A-Za-z0-9_.-]*@[A-Za-z0-9_.-]+\.[A-Za-z0-9]+$/
-                let re2 = /^[0-9]+$/
                 let re3 = /^[A-Za-z0-9]+$/
-                let date = (new Date(this.form.account_year,this.form.account_month,0))
-                let EndDay = date.getDate() + 1
+
+                // 氏名の入力フォームのバリデーション
+                if (!this.form.account_name) {
+                    this.SignupValidation.SignupNameResult = "名前を入力してください"
+                    console.log("名前未入力")
+                    this.errors.push(this.SignupValidation.SignupNameResult)
+                    this.nameResult = false
+                }
+                else if (!this.form.account_name.match(/^[a-zA-Zぁ-んァ-ヶー一-龠]+$/)) {
+                    this.SignupValidation.SignupNameResult = "名前に使用できない文字が含まれています"
+                    console.log("使用できない文字が含まれている")
+                    this.errors.push(this.SignupValidation.SignupNameResult)
+                    this.nameResult = false
+                }
+                else if (this.form.account_name.length >= 20) {
+                    this.SignupValidation.SignupNameResult = "20文字以下で入力してください"
+                    console.log("名前:文字数オーバー")
+                    this.errors.push(this.SignupValidation.SignupNameResult)
+                    this.nameResult = false
+                } else {
+                    this.nameResult  = true
+                    this.SignupValidation.SignupNameResult = ""
+                }
+
+                //生年月日のバリデーション必要なし
+                //性別のバリデーション必要なし
 
                 // メールアドレスの入力フォームのバリデーション
                 if (!this.form.account_address) {
                     this.SignupValidation.SignupAddressResult = "メールアドレスを入力してください"
-                    console.log(this.SignupValidation.SignupAddressResult)
-                    SignMail = false
+                    console.log("メールアドレスを未入力")
+                    this.mailResult = false
                 }
-                else if (!re1.test(this.form.account_address) && this.form.account_address !== undefined) {
+                else if (!re1.test(this.form.account_address)){
                     this.SignupValidation.SignupAddressResult = "メールアドレスの形式で入力してください"
-                    console.log(this.SignupValidation.SignupAddressResult)
-                    SignMail = false
+                    console.log("メールアドレスの形式ではない")
+                    this.mailResult = false
                 }
                 else if (this.form.account_address.length >= 200) {
-                    this.SignupValidation.SignupAddressResult = "メールアドレスの文字数オーバー"
-                    console.log(this.SignupValidation.SignupAddressResult)
-                    SignMail = false
+                    this.SignupValidation.SignupAddressResult = "200文字以下で入力してください"
+                    console.log("メールアドレス文字数オーバー")
+                    this.mailResult = false
                 }
                 else {
-                    SignMail = true
+                    this.mailResult = true
                     this.SignupValidation.SignupAddressResult = ""
                 }
-
 
                 // パスワードの入力フォームのバリデーション
                 if (!this.form.account_pass) {
                     this.SignupValidation.SignupPasswordResult = "パスワードを入力してください"
-                    console.log(this.SignupValidation.SignupPasswordResult)
+                    console.log("パスワード未入力")
                     this.errors.push(this.SignupValidation.SignupPasswordResult)
-                    SignPass = false
+                    this.passResult = false
                 }
                 else if (!re3.test(this.form.account_pass)) {
-                    console.log("パスワードに使用できない文字、もしくは全角が含まれています")
-                    this.SignupValidation.SignupPasswordResult = "パスワードに使用できない文字、もしくは全角が含まれています"
+                    console.log("パスワードに使用できない文字が含まれています")
+                    this.SignupValidation.SignupPasswordResult = "パスワードに使用できない文字が含まれています"
                     this.errors.push(this.SignupValidation.SignupPasswordResult)
-                    SignPass = false
+                    this.passResult = false
                 }
                 else if (this.form.account_pass.length < 6) {
-                    this.SignupValidation.SignupPasswordResult = "パスワードの文字数が少ないです"
-                    console.log(this.SignupValidation.SignupPasswordResult)
+                    this.SignupValidation.SignupPasswordResult = "6文字以上で入力してください"
+                    console.log("パスワードが短すぎる")
                     this.errors.push(this.SignupValidation.SignupPasswordResult)
-                    SignPass = false
+                    this.passResult = false
                 }
                 else if (this.form.account_pass.length > 128) {
-                    this.SignupValidation.SignupPasswordResult = "パスワードの文字数オーバー"
-                    console.log(this.SignupValidation.SignupPasswordResult)
+                    this.SignupValidation.SignupPasswordResult = "128文字以下で入力してください"
+                    console.log("パスワードが長すぎる")
                     this.errors.push(this.SignupValidation.SignupPasswordResult)
-                    SignPass = false
+                    this.passResult = false
                 } else {
-                    SignPass = true
+                    this.passResult = true
                     this.SignupValidation.SignupPasswordResult = ""
                 }
-
-                // 氏名の入力フォームのバリデーション
-                if (!this.form.account_name) {
-                    this.SignupValidation.SignupNameResult = "氏名を入力してください"
-                    console.log(this.SignupValidation.SignupNameResult)
-                    this.errors.push(this.SignupValidation.SignupNameResult)
-                    SignName = false
-                }
-                else if (re2.test(this.form.account_name)) {
-                    this.SignupValidation.SignupNameResult = "名前に使用できない文字が含まれています"
-                    console.log(this.SignupValidation.SignupNameResult)
-                    this.errors.push(this.SignupValidation.SignupNameResult)
-                    SignName = false
-                }
-                else if (this.form.account_name.length >= 20) {
-                    this.SignupValidation.SignupNameResult = "名前の文字数オーバー"
-                    console.log(this.SignupValidation.SignupNameResult)
-                    this.errors.push(this.SignupValidation.SignupNameResult)
-                    SignName = false
-                } else {
-                    SignName = true
-                    this.SignupValidation.SignupNameResult = ""
-                }
-
-
-                // 生年月日の入力フォームのバリデーション
-                if (!this.form.account_year && !this.form.account_year && !this.form.account_month && !this.form.account_day){
-                    this.SignupValidation.SignupBirthdayResult = ""
-                    this.SignupValidation.SignupBirthdayYearResult = ""
-                    this.SignupValidation.SignupBirthdayMonthResult = ""
-                    this.SignupValidation.SignupBirthdayDayResult = ""
-                    this.SignupValidation.SignupBirthdayResult = "生年月日を入力してください"
-                    console.log(this.SignupValidation.SignupBirthdayResult)
-                    this.errors.push(this.SignupValidation.SignupBirthdayResult)
-                    SignBirthDay = false
-                }
-                else if(!re2.test(this.form.account_year)){
-                    this.SignupValidation.SignupBirthdayResult = ""
-                    this.SignupValidation.SignupBirthdayYearResult = ""
-                    this.SignupValidation.SignupBirthdayMonthResult = ""
-                    this.SignupValidation.SignupBirthdayDayResult = ""
-                    this.SignupValidation.SignupBirthdayResult = "数値以外の値、もしくは全角が含まれています"
-                    console.log(this.SignupValidation.SignupBirthdayResult)
-                    this.errors.push(this.SignupValidation.SignupBirthdayResult)
-                    SignBirthDay = false
-                }
-                else if(!re2.test(this.form.account_month)){
-                    this.SignupValidation.SignupBirthdayResult = ""
-                    this.SignupValidation.SignupBirthdayYearResult = ""
-                    this.SignupValidation.SignupBirthdayMonthResult = ""
-                    this.SignupValidation.SignupBirthdayDayResult = ""
-                    this.SignupValidation.SignupBirthdayResult = "数値以外の値、もしくは全角が含まれています"
-                    console.log(this.SignupValidation.SignupBirthdayResult)
-                    this.errors.push(this.SignupValidation.SignupBirthdayResult)
-                    SignBirthDay = false
-                }
-                else if(!re2.test(this.form.account_day)){
-                    this.SignupValidation.SignupBirthdayResult = ""
-                    this.SignupValidation.SignupBirthdayYearResult = ""
-                    this.SignupValidation.SignupBirthdayMonthResult = ""
-                    this.SignupValidation.SignupBirthdayDayResult = ""
-                    this.SignupValidation.SignupBirthdayResult = "数値以外の値、もしくは全角が含まれています"
-                    console.log(this.SignupValidation.SignupBirthdayResult)
-                    this.errors.push(this.SignupValidation.SignupBirthdayResult)
-                    SignBirthDay = false
-                }
-                else {
-
-                    SignBirthDay = true
-                    this.SignupValidation.SignupBirthdayResult = ""
-
-                    // 年バリデーション
-                    if (this.form.account_year.length > 4) {
-                        this.SignupValidation.SignupBirthdayYearResult = "年：文字数オーバー"
-                        console.log(this.SignupValidation.SignupBirthdayYearResult)
-                        this.errors.push(this.SignupValidation.SignupBirthdayYearResult)
-                        SignBirthDayYear = false
-                    } else if (!this.form.account_year) {
-                        this.SignupValidation.SignupBirthdayYearResult = ""
-                        console.log(this.SignupValidation.SignupBirthdayYearResult)
-                        this.errors.push(this.SignupValidation.SignupBirthdayYearResult)
-                        SignBirthDayYear = false
-                    } else if (!(this.form.account_year > 1899 && this.form.account_year < 2021)) {
-                        this.SignupValidation.SignupBirthdayYearResult = "年：年数制限エラー"
-                        console.log(this.SignupValidation.SignupBirthdayYearResult)
-                        this.errors.push(this.SignupValidation.SignupBirthdayYearResult)
-                        SignBirthDayYear = false
-                    } else {
-                        SignBirthDayYear = true
-                        this.SignupValidation.SignupBirthdayYearResult = ""
-                    }
-                    // 月バリデーション
-                    if (this.form.account_month.length > 2) {
-                        this.SignupValidation.SignupBirthdayMonthResult = "月：文字数オーバー"
-                        console.log(this.SignupValidation.SignupBirthdayMonthResult)
-                        this.errors.push(this.SignupValidation.SignupBirthdayMonthResult)
-                        SignBirthDayMonth = false
-                    } else if (!this.form.account_month) {
-                        this.SignupValidation.SignupBirthdayMonthResult = ""
-                        console.log(this.SignupValidation.SignupBirthdayMonthResult)
-                        this.errors.push(this.SignupValidation.SignupBirthdayMonthResult)
-                        SignBirthDayMonth = false
-                    }
-                    else if (!(this.form.account_month > 0 && this.form.account_month < 13)) {
-                        this.SignupValidation.SignupBirthdayMonthResult = "月：月数制限エラー"
-                        console.log(this.SignupValidation.SignupBirthdayMonthResult)
-                        this.errors.push(this.SignupValidation.SignupBirthdayMonthResult)
-                        SignBirthDayMonth = false
-                    } else {
-                        SignBirthDayMonth = true
-                        this.SignupValidation.SignupBirthdayMonthResult = ""
-                    }
-                    // 日バリデーション
-                    if (this.form.account_day.length > 2) {
-                        this.SignupValidation.SignupBirthdayDayResult = "日：文字数オーバー"
-                        console.log(this.SignupValidation.SignupBirthdayDayResult)
-                        this.errors.push(this.SignupValidation.SignupBirthdayDayResult)
-                        SignBirthDayDay = false
-                    } else if (!this.form.account_day) {
-                        this.SignupValidation.SignupBirthdayDayResult = ""
-                        console.log(this.SignupValidation.SignupBirthdayDayResult)
-                        this.errors.push(this.SignupValidation.SignupBirthdayDayResult)
-                        SignBirthDayDay = false
-                    }
-                    else if (!(this.form.account_day > 0 && this.form.account_day < EndDay)) {
-                        this.SignupValidation.SignupBirthdayDayResult = "日：日数制限エラー"
-                        console.log(this.SignupValidation.SignupBirthdayDayResult)
-                        console.log(this.form.account_day)
-                        this.errors.push(this.SignupValidation.SignupBirthdayDayResult)
-                        SignBirthDayDay = false
-                    } else {
-                        SignBirthDayDay = true
-                        this.SignupValidation.SignupBirthdayDayResult = ""
-                    }
-                }
-
 
                 // 体重の入力フォームのバリデーション
                 if (!this.form.account_weight) {
                     this.SignupValidation.SignupWeightResult = "体重を入力してください"
-                    console.log(this.SignupValidation.SignupWeightResult)
+                    console.log("体重未入力")
                     this.errors.push(this.SignupValidation.SignupWeightResult)
-                    SignWeight = false
-                }
-                else if (!re2.test(this.form.account_weight)) {
-                    this.SignupValidation.SignupWeightResult = "数値以外の値、もしくは全角が含まれています"
-                    console.log(this.SignupValidation.SignupWeightResult)
-                    this.errors.push(this.SignupValidation.SignupWeightResult)
-                    SignWeight = false
+                    this.weightResult = false
                 }
                 else if (this.form.account_weight < 15) {
-                    this.SignupValidation.SignupWeightResult = "軽すぎです"
-                    console.log(this.SignupValidation.SignupWeightResult)
+                    this.SignupValidation.SignupWeightResult = "15kg以上で入力してください"
+                    console.log("体重:規定値より小さい")
                     this.errors.push(this.SignupValidation.SignupWeightResult)
-                    SignWeight = false
+                    this.weightResult = false
                 }
                 else if (this.form.account_weight > 300) {
-                    this.SignupValidation.SignupWeightResult = "重すぎです"
-                    console.log(this.SignupValidation.SignupWeightResult)
+                    this.SignupValidation.SignupWeightResult = "300kg以下で入力してください"
+                    console.log("体重:規定値より大きい")
                     this.errors.push(this.SignupValidation.SignupWeightResult)
-                    SignWeight = false
+                    this.weightResult = false
                 }
                 else {
-                    SignWeight = true
+                    this.weightResult = true
                     this.SignupValidation.SignupWeightResult = ""
                 }
 
                 // 身長の入力フォームのバリデーション
                 if (!this.form.account_height) {
                     this.SignupValidation.SignupHeightResult = "身長を入力してください"
-                    console.log(this.SignupValidation.SignupHeightResult)
+                    console.log("身長未入力")
                     this.errors.push(this.SignupValidation.SignupHeightResult)
-                    SignHeight = false
-                }
-                else if (!re2.test(this.form.account_height)) {
-                    this.SignupValidation.SignupHeightResult = "数値以外の値、もしくは全角が含まれています"
-                    console.log(this.SignupValidation.SignupHeightResult)
-                    this.errors.push(this.SignupValidation.SignupHeightResult)
-                    SignHeight = false
+                    this.heightResult = false
                 }
                 else if (this.form.account_height < 80) {
-                    this.SignupValidation.SignupHeightResult = "低すぎです"
-                    console.log(this.SignupValidation.SignupHeightResult)
+                    this.SignupValidation.SignupHeightResult = "80cm以上で入力してください"
+                    console.log("身長：規定値より小さい")
                     this.errors.push(this.SignupValidation.SignupHeightResult)
-                    SignHeight = false
+                    this.heightResult = false
                 }
                 else if (this.form.account_height > 300) {
-                    this.SignupValidation.SignupHeightResult = "高すぎです"
-                    console.log(this.SignupValidation.SignupHeightResult)
+                    this.SignupValidation.SignupHeightResult = "300cm以下で入力してください"
+                    console.log("身長：規定値より大きい")
                     this.errors.push(this.SignupValidation.SignupHeightResult)
-                    SignHeight = false
+                    this.heightResult = false
                 }
                 else {
-                    SignHeight = true
+                    this.heightResult = true
                     this.SignupValidation.SignupHeightResult = ""
                 }
 
-                // 氏名の入力フォームのバリデーション
+                // 身体活動レベルの入力フォームのバリデーション
                 if (!this.form.account_level) {
                     this.SignupValidation.SignupLevelResult = "レベルを入力してください"
                     console.log(this.SignupValidation.SignupLevelResult)
                     this.errors.push(this.SignupValidation.SignupLevelResult)
-                    SignLevel = false
+                    this.levelResult = false
                 }else {
                     this.SignupValidation.SignupLevelResult = ""
-                    SignLevel = true
+                    this.levelResult = true
                 }
 
+                //目的のバリデーション必要なし
+
                 //バリデーションをクリアした時にsign-up
-                if (SignMail === true && SignPass === true && SignName === true
-                    && SignBirthDay === true && SignBirthDayYear === true && SignBirthDayMonth === true
-                    && SignBirthDayDay === true && SignWeight === true && SignHeight === true && SignLevel === true) {
+                console.log(this.errors)
+                if (this.errors.length===0) {
                     const check = await this.Data_post(this.form)
                     if (check !== 0){
                         //登録時
                         this.$store.commit('tokenUpdate',check)
                         await this.$router.replace("/savecalorie")
                     }else {
-                        //エラーや存在しなかった場合
-                        console.log("アカウントが存在しないもしくわエラー")
-                        alert("エラーが発生しました。もう一度やり直してください")
+                        //エラーが発生した場合
+                        alert("新規登録に失敗しました。もう一度やり直してください")
                     }
+                }else {
+                    this.scrollTop()
                 }
                 event.preventDefault();
             },

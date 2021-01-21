@@ -1,50 +1,39 @@
 <template>
     <div class="container">
-        <h3 class="pt-4">始めてから{{timeDay}}日が立ちました！！</h3>
+        <div class="pt-4 h2">今日で{{timeDay}}日目！</div>
         <div class="row pt-2 pb-2">
-            <button @click="downYear" class="btn btn-outline-danger btn-sm">-1</button>
+            <button @click="downYear" class="btn btn-outline-danger btn-sm" v-if="this.check2">-1</button>
             <h4 class="pt-1 px-2">{{year}}年</h4>
-            <button @click="upYear" class="btn btn-outline-success btn-sm">+1</button>
+            <button @click="upYear" class="btn btn-outline-success btn-sm" v-if="this.check">+1</button>
         </div>
-
-
-        <div v-if="!spiner">
-            <button class="btn btn-primary" type="button" disabled>
-                <span class="spinner-border" role="status" aria-hidden="true"></span> Loading...</button>
-        </div>
-        <div v-if="spiner">
-            <div class="row">
-                <table class="table table-sm col-lg-5 col-auto" >
-                    <thead>
-                    <tr class="table-success">
-                        <th class="month">月</th>
-                        <th class="food">摂取カロリー</th>
-                        <th class="training">消費カロリー</th>
-                        <th class="training">貯金</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="item in 12" v-bind:key="item">
-                        <td>{{ item }}月</td>
-                        <td>{{intaked[item-1]}}</td>
-                        <td>{{burned[item-1]}}</td>
-                        <td>{{calorieBox[item-1]}}</td>
-                    </tr>
-                    <td v-if="!burned.length">リストは空です</td>
-                    </tbody>
-                </table>
-                <StatisticsChart class="col-lg-7" :chart-data="dataCollection" :options="dataOptions"></StatisticsChart>
-                </div>
-        </div>
+        <div class="row">
+            <table class="table table-sm col-lg-5 col-auto" >
+                <thead>
+                <tr class="table-success">
+                    <th class="month">月</th>
+                    <th class="food">摂取カロリー</th>
+                    <th class="training">消費カロリー</th>
+                    <th class="training">貯金</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="item in 12" v-bind:key="item">
+                    <td>{{ item }}月</td>
+                    <td>{{intaked[item-1]}}</td>
+                    <td>{{burned[item-1]}}</td>
+                    <td>{{calorieBox[item-1]}}</td>
+                </tr>
+                <td v-if="!burned.length">リストは空です</td>
+                </tbody>
+            </table>
+            <StatisticsChart class="col-lg-7" :chart-data="dataCollection" :options="dataOptions"></StatisticsChart>
+            </div>
     </div>
 </template>
 
 <script>
-
     import StatisticsChart from "./SaveCalorieChart";
-
     export default {
-
         name: "Statistics",
         data(){
             return{
@@ -57,8 +46,11 @@
                 calorieBox:[],
                 dataCollection: null,
                 dataOptions:null,
-                spiner:false
-
+                spiner:false,
+                toyear:new Date(),
+                check:false,
+                check2:true,
+                collorBox:[],
             }
         },
         components: {
@@ -87,7 +79,9 @@
                     labels: ['1月', '2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
                     datasets: [
                         {
-                            backgroundColor: '#58a125',
+                            backgroundColor: [this.collorBox[0],this.collorBox[1],this.collorBox[2],this.collorBox[3],this.collorBox[4],
+                                this.collorBox[5],this.collorBox[6],this.collorBox[7],this.collorBox[8],this.collorBox[9],this.collorBox[10],
+                                this.collorBox[11],],
                             data: [this.calorieBox[0], this.calorieBox[1],this.calorieBox[2],this.calorieBox[3],this.calorieBox[4],
                                 this.calorieBox[5],this.calorieBox[6],this.calorieBox[7],this.calorieBox[8],this.calorieBox[9],
                                 this.calorieBox[10],this.calorieBox[11]]
@@ -154,14 +148,27 @@
             },
             upYear(){
                 this.year+=1
+                if (Number(this.year) === Number(this.toyear.getFullYear())){
+                    this.check = false
+                }
+                if (Number(this.year) >= 2020){
+                    this.check2 = true
+                }
             },
             downYear(){
                 this.year-=1
+                if (Number(this.year) <= Number(this.toyear.getFullYear())){
+                    this.check = true
+                }
+                if (Number(this.year) === 2020){
+                    this.check2 = false
+                }
             }
         },
         watch:{
             year:async function () {
-                this.spiner = false
+                //ローディングアニメーションを起動
+                this.$store.commit("setLoading", true)
                 //通信
                 const URL = "https://fat3lak1i2.execute-api.us-east-1.amazonaws.com/acsys/users/statistics"
                 this.dataGet={
@@ -182,8 +189,21 @@
                             console.log("カロリー統計取得:ok")
                             this.intaked = data["intaked"]
                             this.burned = data["burned"]
+                            if (this.$store.state.accountPurpose==="減量"){
+                                for (let i = 0; i < 12; i++) {
+                                    this.calorieBox[i] =  this.burned[i] - this.intaked[i]
+                                }
+                            }else {
+                                for (let i = 0; i < 12; i++) {
+                                    this.calorieBox[i] =  this.intaked[i] - this.burned[i]
+                                }
+                            }
                             for (let i = 0; i < 12; i++) {
-                                this.calorieBox[i] =  this.burned[i] - this.intaked[i]
+                                if (this.calorieBox[i] >= 0){
+                                    this.collorBox[i] = "mediumspringgreen"
+                                }else{
+                                    this.collorBox[i] = "crimson"
+                                }
                             }
                             this.fillData()
                         }else {
@@ -195,12 +215,9 @@
                         console.log(error)
                         alert("エラーが発生しました。もう一度やり直してください")
                     })
-                this.spiner = true
+                //ローディングアニメーションを終了
+                this.$store.commit("setLoading", false)
             },
         }
     }
 </script>
-
-<style scoped>
-
-</style>

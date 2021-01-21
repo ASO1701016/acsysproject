@@ -17,10 +17,15 @@ export default new Vuex.Store({
         accountWeight:'',
         accountActiveLevel:'',
         accountStartDay:'',
+        accountPurpose:'',
         //Twitter投稿用カロリー情報
         intakeCalorie:'',
         consumptionCalorie:'',
         calorie:'',
+        //ローディングアニメーション
+        loading: false,
+        //日付指定登録
+        date:'',
         //判定必須情報
         motion1:'', //選択トレーニング内容
         motion2:'', //選択トレーニングc平均メッツ値
@@ -47,6 +52,7 @@ export default new Vuex.Store({
             state.calorie = ""
             state.intakeCalorie = ""
             state.consumptionCalorie = ""
+            state.accountPurpose = ""
         },
         //ユーザー取得又は更新
         accountUpdate(state,data){
@@ -57,12 +63,21 @@ export default new Vuex.Store({
             state.accountWeight = data.weight
             state.accountActiveLevel = data.activlevel
             state.accountStartDay = data.startday
+            state.accountPurpose = data.purpose
         },
         //カロリー情報の取得
         calorieAdd(state,data){
             state.calorie = data.userCalorie
             state.intakeCalorie = data.userIntakeCalorie
             state.consumptionCalorie = data.userConsumptionCalorie
+        },
+        //ローディングアニメーション
+        setLoading(state, payload) {
+            state.loading = payload
+        },
+        //日付指定
+        setDate(state,dateInput){
+            state.date = dateInput
         },
         //判定情報のセット
         // setMenu(state, val) {

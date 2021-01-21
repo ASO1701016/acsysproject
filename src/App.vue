@@ -6,6 +6,7 @@
       <transition mode="out-in">
           <router-view />
       </transition>
+      <Loading />
     </div>
 </template>
 
@@ -13,12 +14,14 @@
 
   import TopHeader from './components/TopHeader.vue'
   import LoginHeader from './components/LoginHeader.vue'
+  import Loading from "./components/Loading";
 
   export default {
     name: 'App',
     components:{
         TopHeader,
         LoginHeader,
+        Loading
     },
   }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed-top">
+    <div>
         <b-navbar toggleable="lg" type="dark"  variant="dark">
             <a class="navbar-brand " href='/'>
                 <img src="../../public/favicon.png" width="35" height="35" class="d-inline-block align-top" alt="penguin">
